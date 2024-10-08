@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DataEnvGym: Data Generation Agents in Teacher Environments with Student Feedback</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+    <style>
+        body {
+            font-family: 'Merriweather', serif;
+        }
+        .publication-title {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+        }
+        .author-block {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+        }
+        .content-block {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .abstract {
+            font-family: 'Merriweather', serif;
+            font-weight: 300;
+        }
+        .teaser .hero-body {
+            padding-top: 0;
+            padding-bottom: 3rem;
+        }
+        .teaser {
+            font-family: 'DM Sans', sans-serif;
+        }
+        .publication-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .link-block {
+            flex: 0 0 auto;
+        }
+        .content {
+            font-family: 'Merriweather', serif;
+        }
+        .navbar, .footer {
+            font-family: 'DM Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+        .example-images {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .example-column {
+            width: 24%; /* Adjust this value as needed */
+            margin-bottom: 1rem;
+        }
+        .example-column img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .example-column {
+                width: 48%; /* 2 columns on smaller screens */
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .example-column {
+                width: 100%; /* 1 column on very small screens */
+            }
+        }
+        .limited-width-image {
+            max-width: 400px;
+            margin: 0 auto;
+            display: block;
+        }
+        .tabs.is-boxed a {
+            padding: 0.75rem 1.5rem;
+        }
+        .tabs .icon {
+            margin-right: 0.5rem;
+        }
+        .tab-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        @media screen and (max-width: 768px) {
+            .publication-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            .link-block {
+                width: 100%;
+                max-width: 200px;
+            }
+            .link-block .button {
+                width: 100%;
+            }
+        }
+        
+        /* Add these new styles */
+        .dataTables_wrapper {
+            overflow-x: auto;
+        }
+        
+        table.dataTable {
+            width: 100% !important;
+        }
+        
+        .dataTables_scrollBody {
+            overflow-x: hidden !important;
+            width: 100% !important;
+        }
+
+        /* Adjust tab styles for mobile */
+        @media screen and (max-width: 768px) {
+            .tabs ul {
+                flex-wrap: wrap;
+            }
+            .tabs li {
+                flex-basis: 100%;
+            }
+            .tabs.is-boxed a {
+                border-radius: 0;
+                margin-bottom: 1px;
+            }
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            min-width: 600px; /* Ensure minimum width for readability */
+            table-layout: fixed;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.5rem;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Adjust column widths */
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 25%;
+        }
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 20%;
+        }
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 25%;
+        }
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 20%;
+        }
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 10%;
+        }
+
+        /* Add responsive styles */
+        @media screen and (max-width: 768px) {
+            .table th,
+            .table td {
+                font-size: 0.9rem;
+                padding: 0.4rem;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .table th,
+            .table td {
+                font-size: 0.8rem;
+                padding: 0.3rem;
+            }
+        }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Add these lines for Lightbox2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="https://dataenvgym.github.io/">
+            <span class="icon">
+                <i class="fas fa-home"></i>
+            </span>
+        </a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-body">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+                <div class="column has-text-centered">
+                    <h1 class="title is-1 publication-title"><strong>DataEnvGym</strong>: Data Generation Agents in Teacher Environments with Student Feedback</h1>
+                    <div class="is-size-5 publication-authors">
+                        <span class="author-block">
+                            <a href="https://zaidkhan.me/">Zaid Khan</a>,
+                        </span>
+                        <span class="author-block">
+                            <a href="https://esteng.github.io/">Elias Stengel-Eskin</a>,
+                        </span>
+                        <span class="author-block">
+                            <a href="https://j-min.io/">Jaemin Cho</a>,
+                        </span>
+                        <span class="author-block">
+                            <a href="https://www.cs.unc.edu/~mbansal/">Mohit Bansal</a>
+                        </span>
+                    </div>
+
+                    <div class="is-size-5 publication-authors">
+                        <span class="author-block">UNC Chapel Hill</span>
+                    </div>
+
+                    <div class="column has-text-centered">
+                        <div class="publication-links">
+                            <!-- GitHub link -->
+                            <span class="link-block">
+                                <a href="https://github.com/codezakh/DataEnvGym" class="external-link button is-normal is-rounded is-dark">
+                                    <span class="icon">
+                                        <i class="fab fa-github"></i>
+                                    </span>
+                                    <span>Code</span>
+                                </a>
+                            </span>
+                            <!-- ArXiv link -->
+                            <span class="link-block">
+                                <a href="https://arxiv.org/abs/2403.xxxxx" class="external-link button is-normal is-rounded is-dark">
+                                    <span class="icon">
+                                        <i class="ai ai-arxiv"></i>
+                                    </span>
+                                    <span>arXiv</span>
+                                </a>
+                            </span>
+                            <!-- Leaderboard link -->
+                            <span class="link-block">
+                                <a href="#leaderboard" class="external-link button is-normal is-rounded is-dark">
+                                    <span class="icon">
+                                        <i class="fas fa-trophy"></i>
+                                    </span>
+                                    <span>Leaderboard</span>
+                                </a>
+                            </span>
+                            <!-- Copy Citation button -->
+                            <span class="link-block">
+                                <button class="button is-normal is-rounded is-dark" id="copy-citation">
+                                    <span class="icon">
+                                        <i class="fas fa-copy"></i>
+                                    </span>
+                                    <span>Copy Citation</span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="hero teaser">
+    <div class="container is-max-desktop">
+        <div class="hero-body">
+            <img src="static/images/dataenv_gym_teaser.png" alt="DataEnvGym Overview">
+            <h2 class="subtitle has-text-centered">
+                <strong>DataEnvGym</strong> provides a testbed for developing data generation agents that improve student models through iterative feedback.
+            </h2>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified abstract">
+            <p>
+                The process of creating training data to teach models is currently driven by humans, who manually analyze model weaknesses and plan how to create data that improves a student model. Recent approaches using large language models (LLMs) as annotators reduce human annotation effort, but still require humans to interpret feedback from evaluations and control the LLM to produce data the student needs. Automating this labor-intensive process by creating autonomous data generation agents – or teachers – is desirable, but requires environments that can simulate the feedback-driven, iterative, closed loop of data creation. To enable rapid and scalable testing for such agents and their modules, we introduce <strong>DataEnvGym</strong>, a testbed of teacher environments for data generation agents. <strong>DataEnvGym</strong> frames data generation as a sequential decision-making task, involving an agent consisting of a data generation policy (which generates a plan for creating training data) and a data generation engine (which transforms the plan into data), inside an environment that provides feedback from a student. The agent's end goal is to improve student model performance. Students are iteratively trained and evaluated on generated data, with their feedback (in the form of errors or weak skills) being reported to the agent after each iteration. As a general-purpose testbed, <strong>DataEnvGym</strong> includes multiple instantiations of teacher environments across three levels of structure in the state representation and action space, with varying levels of scaffolding support. More structured environments are based on automatically-inferred skills and offer a higher degree of interpretability and control over the curriculum. We support developing and testing data generation agents in three diverse tasks covering both text and images (mathematics, programming, and visual question answering) and test multiple student and teacher models. We find that example agents in our teaching environments can iteratively improve students across diverse tasks and settings. Moreover, we show that environments can teach different skill levels and can be used to test variants of key modules, pointing to directions of future work in improving data generation agents, engines, and feedback mechanisms.
+            </p>
+        </div>
+        
+        <h2 class="title is-3">Key Features</h2>
+        <div class="content">
+            <ul>
+                <li>Build data generation agents that can automatically create data to improve a student model</li>
+                <li>Modular environments that support diverse tasks: mathematics (<a href="https://arxiv.org/pdf/2103.03874">MATH</a>), programming (<a href="https://livecodebench.github.io/">LiveCodeBench</a>), and visual question answering (<a href="https://cs.stanford.edu/people/dorarad/gqa/about.html">GQA</a>)</li>
+                <li>Baseline implementations of data generation agents for each of the above tasks</li>
+                <li>Fully typed codebase</li>
+                <li>Integration with vLLM and Ray for fast, parallel inference</li>
+                <li>Integration with Llama-Factory for training</li>
+            </ul>
+        </div>
+
+        <h2 class="title is-3"><strong>DataEnvGym</strong> Environments</h2>
+        <div class="content">
+            <img src="static/images/dataenvgym-environments.png" alt="DataEnvGym Environments" class="image is-fullwidth">
+            <p class="has-text-centered is-italic">
+                Figure 1: Illustration of the three example instances of <strong>DataEnvGym</strong> environments.
+            </p>
+            <p>
+                <strong>DataEnvGym</strong> provides three categories of (environment, agent) pairs with varying levels of structure and interpretability:
+            </p>
+            <ol>
+                <li><strong>Open-Ended Environment:</strong> The state is represented as a list of per-example accuracies, and the data generation plan directly creates a data generation plan from them.</li>
+                <li><strong>Skill-List Environment:</strong> The state is represented as a categorized list of skills and per-skill student model performance. Its data generation plan allows the policy to prioritize weak skills.</li>
+                <li><strong>Skill-Tree Environment:</strong> The state is represented as a forest of skill trees containing skill-subskill relational information. Its data generation policy chooses between two actions for each skill: explore (grow skill tree) and exploit (rebalance skill tree).</li>
+            </ol>
+
+            <figure class="image">
+                <img src="static/images/skill-tree-updates.png" alt="Skill Tree Updates" class="image is-fullwidth">
+                <figcaption class="has-text-centered">
+                    Figure 2: Example skill tree updates over time for MATH task's "Algebra" skill in the Skill-Tree environment.
+                    Starting from an empty single node, the data generation policy iteratively chooses actions between "explore" (grow skill tree) and "exploit" (rebalance skill tree).
+                    Then the skill organization module accordingly adds/removes subskills and re-allocates the training data for each subskill.
+                </figcaption>
+            </figure>
+
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Environments</th>
+                        <th>Trainer/Evaluator</th>
+                        <th>Skill Discovery</th>
+                        <th>Skill Organization</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Open-Ended</td>
+                        <td>✓</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Skill-List</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Skill-Tree</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="has-text-centered is-italic">
+                Table 1: Summary of baseline environments for DataEnvGym, with different components that determine how to generate training examples for each iteration.
+        </div>
+
+        <h2 class="title is-3">Results</h2>
+        <div class="content">
+            <p>Our experiments demonstrate that:</p>
+            <ul>
+                <li>Agents in <strong>DataEnvGym</strong> improve student performance across different tasks and environments</li>
+                <li>Conditioning on feedback state is key to successful data generation</li>
+                <li>Different environments offer trade-offs between flexibility and controllability of the curriculum</li>
+                <li>Skill-based approaches provide interpretability and human-model interoperability</li>
+            </ul>
+
+            <img src="static/images/primary-results-table.png" alt="Primary Results Table" class="image is-fullwidth">
+            <p class="has-text-centered is-italic">
+                Table 2: Primary results across different tasks and environments.
+            </p>
+
+            <h3 class="title is-4">Skill Learning Across Rarity and Difficulty Levels</h3>
+            <div class="columns">
+                <div class="column">
+                    <p>
+                        While the primary results in Table 2 show that skill-based learning in the Skill-Tree environment can improve overall performance of student models, we further investigated how learning correlates with features like question average difficulty or skill frequency.
+                    </p>
+                    <p>
+                        Figure 3 shows the accuracy improvement of a Gemma-2B student model after training in <strong>DataEnvGym</strong>'s Skill-Tree environment for the MATH task. We observe that most skills improve, but to varying degrees.
+                    </p>
+                    <p>
+                        This pattern is reminiscent of theories in human learning, such as Vygotsky's Zone of Proximal Development, where learning is most effective when students are given problems slightly harder than those they could solve alone, but not so difficult that they would have no hope of solving them.
+                    </p>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <figure class="image">
+                        <img src="static/images/skill-teaching.png" alt="Skill Learning Across Rarity and Difficulty Levels">
+                        <figcaption class="has-text-centered">
+                            Figure 3: Per-skill accuracy improvements of Gemma-2B trained on MATH in the Skill-Tree
+                            environment, as a function of (a) question difficulty and (b) skill rarity (inverse of frequency) in
+                            the training data. The biggest performance increases occur in the middle range for difficulty and on
+                            the lower range for rarity (i.e. on more frequent skills) 
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <h3 class="title is-4">Iterative Training Dynamics</h3>
+            <div class="columns">
+                <div class="column">
+                    <p>
+                        In Figure 4, we plot the change in the student model's performance on the validation set throughout a full run in <strong>DataEnvGym</strong> on each task and for each environment. Each experiment is truncated once the performance consistently decreases for multiple iterations. We use the "With State" baseline agents for each environment, and use the same models as in Table 2.
+                    </p>
+                    <p>
+                        Figure 4 shows that the students generally improve across iterations. In other words, the baseline agents do uncover new datapoints that further improve the student at each iteration.
+                    </p>
+                    <figure class="image">
+                        <img src="static/images/iterations.png" alt="Training Dynamics Across Three Tasks">
+                        <figcaption class="has-text-centered">
+                            Figure 4: Training dynamics across three tasks. Performance generally increases over iterations.
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <h3 class="title is-4">Impact of Skill Discovery Quality</h3>
+            <div class="columns">
+                <div class="column">
+                    <p>
+                        <strong>DataEnvGym</strong> allows us to test various implementations of environment components. We compared oracle vs. inferred skills for GQA and MATH tasks. The results show that better skills result in better teaching and thus an improved student performance.
+                    </p>
+                    <p>
+                        For each domain, we determined a set of oracle skills. In GQA, these were human-annotated skills, while for MATH (which lacks human annotations), we approximated oracle skills by running the skill discovery module on the test data.
+                    </p>
+                    <figure class="image">
+                        <img src="static/images/skill-discovery-ablation.png" alt="Skill Discovery Ablation Results" class="limited-width-image">
+                        <figcaption class="has-text-centered">
+                            Figure 5: Comparison of oracle vs. inferred skills for GQA and MATH tasks, showing the impact on student model performance.
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="leaderboard">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Leaderboard</h2>
+        <div class="tabs is-boxed">
+            <ul>
+                <li class="is-active">
+                    <a data-tab="multimodal">
+                        <span class="icon is-small"><i class="fas fa-image"></i></span>
+                        <span class="tab-text">Multimodal</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-tab="math">
+                        <span class="icon is-small"><i class="fas fa-square-root-alt"></i></span>
+                        <span class="tab-text">Math</span>
+                    </a>
+                </li>
+                <li>
+                    <a data-tab="code">
+                        <span class="icon is-small"><i class="fas fa-code"></i></span>
+                        <span class="tab-text">Code</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div id="multimodal" class="tab-content">
+            <div class="table-container">
+                <table class="table is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Teacher Agent</th>
+                            <th>Environment</th>
+                            <th>Student Improvement</th>
+                            <th>Date</th>
+                            <th>Site</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="math" class="tab-content" style="display:none;">
+            <div class="table-container">
+                <table class="table is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Teacher Agent</th>
+                            <th>Environment</th>
+                            <th>Student Improvement</th>
+                            <th>Date</th>
+                            <th>Site</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="code" class="tab-content" style="display:none;">
+            <div class="table-container">
+                <table class="table is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Teacher Agent</th>
+                            <th>Environment</th>
+                            <th>Student Improvement</th>
+                            <th>Date</th>
+                            <th>Site</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Qualitative Examples</h2>
+        <div class="content">
+            <p>Click on the images below to view qualitative examples for each task:</p>
+            <div class="example-images">
+                <div class="example-column">
+                    <a href="static/images/qual_examples_gqa.png" data-lightbox="examples" data-title="Figure 6: GQA Qualitative Examples">
+                        <img src="static/images/qual_examples_gqa.png" alt="GQA Examples">
+                    </a>
+                    <p class="has-text-centered">Figure 6: GQA Examples<br><small>(click to zoom)</small></p>
+                    <a href="static/images/qual_examples_gqa.png" target="_blank" class="button is-small is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </span>
+                        <span>Open in new tab</span>
+                    </a>
+                </div>
+                <div class="example-column">
+                    <a href="static/images/qual_examples_lcb.png" data-lightbox="examples" data-title="Figure 7: LiveCodeBench Qualitative Examples">
+                        <img src="static/images/qual_examples_lcb.png" alt="LiveCodeBench Examples">
+                    </a>
+                    <p class="has-text-centered">Figure 7: LiveCodeBench Examples<br><small>(click to zoom)</small></p>
+                    <a href="static/images/qual_examples_lcb.png" target="_blank" class="button is-small is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </span>
+                        <span>Open in new tab</span>
+                    </a>
+                </div>
+                <div class="example-column">
+                    <a href="static/images/qual_examples_math.png" data-lightbox="examples" data-title="Figure 8: MATH Qualitative Examples">
+                        <img src="static/images/qual_examples_math.png" alt="MATH Examples">
+                    </a>
+                    <p class="has-text-centered">Figure 8: MATH Examples<br><small>(click to zoom)</small></p>
+                    <a href="static/images/qual_examples_math.png" target="_blank" class="button is-small is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </span>
+                        <span>Open in new tab</span>
+                    </a>
+                </div>
+                <div class="example-column">
+                    <a href="static/images/before-after-gqa.png" data-lightbox="examples" data-title="Figure 9: Before and After Examples for GQA">
+                        <img src="static/images/before-after-gqa.png" alt="Before and After GQA Examples">
+                    </a>
+                    <p class="has-text-centered">Figure 9: Before/After GQA<br><small>(click to zoom)</small></p>
+                    <a href="static/images/before-after-gqa.png" target="_blank" class="button is-small is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </span>
+                        <span>Open in new tab</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Citation</h2>
+        <div class="content">
+            <pre><code>@article{khan2024dataenvgym,
+  title={DataEnvGym: Data Generation Agents in Teacher Environments with Student Feedback},
+  author={Khan, Zaid and Stengel-Eskin, Elias and Cho, Jaemin and Bansal, Mohit},
+  journal={arXiv preprint arXiv:2403.xxxxx},
+  year={2024}
+}</code></pre>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="content has-text-centered">
+            <p>
+                Website template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script>
+document.getElementById('copy-citation').addEventListener('click', function() {
+    const citationText = `@article{khan2024dataenvgym,
+  title={DataEnvGym: Data Generation Agents in Teacher Environments with Student Feedback},
+  author={Khan, Zaid and Stengel-Eskin, Elias and Cho, Jaemin and Bansal, Mohit},
+  journal={arXiv preprint arXiv:2403.xxxxx},
+  year={2024}
+}`;
+    
+    navigator.clipboard.writeText(citationText).then(function() {
+        alert('Citation copied to clipboard!');
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+    });
+});
+</script>
+
+<!-- Add these lines before the closing </body> tag -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const leaderboardData = {
+        multimodal: [
+            ["Baseline-GPT-4o-mini", "Open-Ended", "+1.33", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Open-Ended", "+3.72", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o-mini", "Skill-List", "+2.56", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Skill-List", "+4.00", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o-mini", "Skill-Tree", "+4.65", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Skill-Tree", "+5.58", "2024-10-08", "https://DataEnvGym.github.io"]
+        ],
+        math: [
+            ["Baseline-GPT-4o-mini", "Open-Ended", "+0.00", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Open-Ended", "+7.66", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o-mini", "Skill-List", "+1.14", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Skill-List", "+3.70", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o-mini", "Skill-Tree", "+0.28", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Skill-Tree", "+3.12", "2024-10-08", "https://DataEnvGym.github.io"]
+        ],
+        code: [
+            ["Baseline-GPT-4o-mini", "Open-Ended", "+1.00", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Open-Ended", "+2.41", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o-mini", "Skill-List", "+1.25", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Skill-List", "+1.75", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o-mini", "Skill-Tree", "+0.50", "2024-10-08", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Skill-Tree", "+1.25", "2024-10-08", "https://DataEnvGym.github.io"]
+        ]
+    };
+
+    function sortDataByImprovement(data) {
+        return data.sort((a, b) => {
+            const improvementA = parseFloat(a[2].replace('+', ''));
+            const improvementB = parseFloat(b[2].replace('+', ''));
+            return improvementB - improvementA;
+        });
+    }
+
+    function populateTable(tableId, data) {
+        const sortedData = sortDataByImprovement(data);
+        const tableBody = document.querySelector(`#${tableId} tbody`);
+        tableBody.innerHTML = '';
+        sortedData.forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach((cell, index) => {
+                const td = document.createElement('td');
+                if (index === row.length - 1) {
+                    // Create a link for the last column
+                    const a = document.createElement('a');
+                    a.href = cell;
+                    a.textContent = '🔗';
+                    td.appendChild(a);
+                } else {
+                    td.textContent = cell;
+                }
+                tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
+        });
+    }
+
+    // Populate initial table
+    populateTable('multimodal', leaderboardData.multimodal);
+
+    // Tab switching functionality
+    const tabs = document.querySelectorAll('.tabs li');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('is-active'));
+            tab.classList.add('is-active');
+            const tabName = tab.querySelector('a').getAttribute('data-tab');
+            tabContents.forEach(content => {
+                if (content.id === tabName) {
+                    content.style.display = 'block';
+                    populateTable(tabName, leaderboardData[tabName]);
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+
+</body>
+</html>
