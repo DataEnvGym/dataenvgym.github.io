@@ -16,6 +16,7 @@
         .publication-title {
             font-family: 'Merriweather', serif;
             font-weight: 700;
+            font-size: 2.5rem !important; /* Reduced size with !important flag */
         }
         .author-block {
             font-family: 'DM Sans', sans-serif;
@@ -241,6 +242,15 @@
 
                     <div class="column has-text-centered">
                         <div class="publication-links">
+                            <!-- Paper link -->
+                            <span class="link-block">
+                                <a href="static/DataEnvGym.pdf" class="external-link button is-normal is-rounded is-dark">
+                                    <span class="icon">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </span>
+                                    <span>Paper</span>
+                                </a>
+                            </span>
                             <!-- GitHub link -->
                             <span class="link-block">
                                 <a href="https://github.com/codezakh/DataEnvGym" class="external-link button is-normal is-rounded is-dark">
@@ -248,15 +258,6 @@
                                         <i class="fab fa-github"></i>
                                     </span>
                                     <span>Code</span>
-                                </a>
-                            </span>
-                            <!-- Paper link (previously ArXiv) -->
-                            <span class="link-block">
-                                <a href="static/DataEnvGym.pdf" class="external-link button is-normal is-rounded is-dark">
-                                    <span class="icon">
-                                        <i class="fas fa-file-pdf"></i>
-                                    </span>
-                                    <span>Paper</span>
                                 </a>
                             </span>
                             <!-- Leaderboard link -->
@@ -268,13 +269,22 @@
                                     <span>Leaderboard</span>
                                 </a>
                             </span>
+                            <!-- HuggingFace link -->
+                            <span class="link-block">
+                                <a href="https://huggingface.co/collections/codezakh/dataenvgym-6706a1c3aa0dff87a2309e30" class="external-link button is-normal is-rounded is-dark">
+                                    <!-- <span class="icon">
+                                        <i class="fab fa-github"></i>
+                                    </span> -->
+                                    <span>🤗 HuggingFace</span>
+                                </a>
+                            </span>
                             <!-- Copy Citation button -->
                             <span class="link-block">
                                 <button class="button is-normal is-rounded is-dark" id="copy-citation">
                                     <span class="icon">
                                         <i class="fas fa-copy"></i>
                                     </span>
-                                    <span>Copy Citation</span>
+                                    <span>BibTeX</span>
                                 </button>
                             </span>
                         </div>
@@ -289,8 +299,12 @@
     <div class="container is-max-desktop">
         <div class="hero-body">
             <img src="static/images/dataenv_gym_teaser.png" alt="DataEnvGym Overview">
-            <h2 class="subtitle has-text-centered">
-                <strong>DataEnvGym</strong> provides a testbed for developing data generation agents that improve student models through iterative feedback.
+            <h2 class="subtitle has-text-left">
+                Overview of DataEnvGym, a novel testbed for data generation agents. The <strong>environment</strong>
+                <strong>(left)</strong> consists of (a) evaluation and (d) training of the student model. The <strong>data generation agent</strong>
+                <strong>(right)</strong> takes a state encoding the current student model's performance and provides training data
+                to improve the student model, by first creating a plan through the (b) data generation policy, then
+                executing the plan via the (c) data generation engine.
             </h2>
         </div>
     </div>
