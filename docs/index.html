@@ -500,6 +500,12 @@
                         <span class="tab-text">Code</span>
                     </a>
                 </li>
+                <li>
+                    <a data-tab="tool">
+                        <span class="icon is-small"><i class="fas fa-wrench"></i></span>
+                        <span class="tab-text">Tool Use</span>
+                    </a>
+                </li>
             </ul>
         </div>
         <div id="multimodal" class="tab-content">
@@ -539,6 +545,24 @@
             </div>
         </div>
         <div id="code" class="tab-content" style="display:none;">
+            <div class="table-container">
+                <table class="table is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Teacher Agent</th>
+                            <th>Environment</th>
+                            <th>Student Improvement</th>
+                            <th>Date</th>
+                            <th>Site</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tool" class="tab-content" style="display:none;">
             <div class="table-container">
                 <table class="table is-striped is-hoverable">
                     <thead>
@@ -688,6 +712,10 @@ document.addEventListener('DOMContentLoaded', function() {
             ["Baseline-GPT-4o", "Skill-List", "+1.75", "2024-10-08", "https://DataEnvGym.github.io"],
             ["Baseline-GPT-4o-mini", "Skill-Tree", "+0.50", "2024-10-08", "https://DataEnvGym.github.io"],
             ["Baseline-GPT-4o", "Skill-Tree", "+1.25", "2024-10-08", "https://DataEnvGym.github.io"]
+        ],
+        tool: [
+            ["Baseline-GPT-4o", "Open-Ended", "+34.70", "2024-12-18", "https://DataEnvGym.github.io"],
+            ["Baseline-GPT-4o", "Skill-List", "+38.66", "2024-12-18", "https://DataEnvGym.github.io"]
         ]
     };
 
