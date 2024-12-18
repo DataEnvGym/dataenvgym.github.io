@@ -321,7 +321,23 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified abstract">
             <p>
-                The process of creating training data to teach models is currently driven by humans, who manually analyze model weaknesses and plan how to create data that improves a student model. Recent approaches using large language models (LLMs) as annotators reduce human annotation effort, but still require humans to interpret feedback from evaluations and control the LLM to produce data the student needs. Automating this labor-intensive process by creating autonomous data generation agents – or teachers – is desirable, but requires environments that can simulate the feedback-driven, iterative, closed loop of data creation. To enable rapid and scalable testing for such agents and their modules, we introduce <strong>DataEnvGym</strong>, a testbed of teacher environments for data generation agents. <strong>DataEnvGym</strong> frames data generation as a sequential decision-making task, involving an agent consisting of a data generation policy (which generates a plan for creating training data) and a data generation engine (which transforms the plan into data), inside an environment that provides feedback from a student. The agent's end goal is to improve student model performance. Students are iteratively trained and evaluated on generated data, with their feedback (in the form of errors or weak skills) being reported to the agent after each iteration. As a general-purpose testbed, <strong>DataEnvGym</strong> includes multiple instantiations of teacher environments across three levels of structure in the state representation and action space, with varying levels of scaffolding support. More structured environments are based on automatically-inferred skills and offer a higher degree of interpretability and control over the curriculum. We support developing and testing data generation agents in three diverse tasks covering both text and images (mathematics, programming, and visual question answering) and test multiple student and teacher models. We find that example agents in our teaching environments can iteratively improve students across diverse tasks and settings. Moreover, we show that environments can teach different skill levels and can be used to test variants of key modules, pointing to directions of future work in improving data generation agents, engines, and feedback mechanisms.
+                The process of creating training data to teach models is currently driven by humans, who manually analyze model weaknesses and plan how to create data that improves a student model. 
+                Recent approaches using large language models (LLMs) as annotators reduce human annotation effort, but still require humans to interpret feedback from evaluations and control the LLM to produce data the student needs. 
+                Automating this labor-intensive process by creating autonomous data generation agents -- or teachers -- is desirable, but requires environments that can simulate the feedback-driven, iterative, closed loop of data creation. 
+                To enable rapid and scalable testing for such agents and their modules,
+                we introduce <strong>DataEnvGym</strong>, a testbed of teacher environments for data generation agents. 
+                <strong>DataEnvGym</strong> frames data generation as a
+                sequential decision-making task,
+                involving an agent consisting of a data generation policy (which generates a plan for creating training data) and a data generation engine (which transforms the plan into data), inside an environment that provides feedback from a student.
+                The agent's end goal is to improve student model performance. 
+                Students are iteratively trained and evaluated on generated data, 
+                with their feedback (in the form of errors or weak skills) being reported to the agent after each iteration.
+                As a general-purpose testbed, <strong>DataEnvGym</strong> includes multiple instantiations of teacher environments across three levels of structure in the state representation and action space, with varying levels of scaffolding support. 
+                More structured environments are based on automatically-inferred skills and offer a higher degree of interpretability and control over the curriculum.
+                We support developing and testing data generation agents in four 
+                diverse tasks covering text, images, and actions (mathematics, programming, visual question answering, and tool-use) and test multiple student and teacher models. 
+                We find that example agents in our teaching environments can iteratively improve students across diverse tasks and settings.
+                Moreover, we show that environments can teach different skill levels and can be used to test variants of key modules, pointing to directions of future work in improving data generation agents, engines, and feedback mechanisms.
             </p>
         </div>
         
@@ -329,11 +345,11 @@
         <div class="content">
             <ul>
                 <li>Build data generation agents that can automatically create data to improve a student model</li>
-                <li>Modular environments that support diverse tasks: mathematics (<a href="https://arxiv.org/pdf/2103.03874">MATH</a>), programming (<a href="https://livecodebench.github.io/">LiveCodeBench</a>), and visual question answering (<a href="https://cs.stanford.edu/people/dorarad/gqa/about.html">GQA</a>)</li>
+                <li>Modular environments that support diverse tasks: mathematics (<a href="https://arxiv.org/pdf/2103.03874">MATH</a>), programming (<a href="https://livecodebench.github.io/">LiveCodeBench</a>), visual question answering (<a href="https://cs.stanford.edu/people/dorarad/gqa/about.html">GQA</a>, <a href="https://linzhiqiu.github.io/papers/naturalbench/">NaturalBench</a>), and tool use (<a href="https://mnms-project.github.io/">MnMs</a>)</li>
                 <li>Baseline implementations of data generation agents for each of the above tasks</li>
                 <li>Fully typed codebase</li>
-                <li>Integration with vLLM and Ray for fast, parallel inference</li>
-                <li>Integration with Llama-Factory for training</li>
+                <li>Integration with <a href="https://vllm.readthedocs.io/en/latest/">vLLM</a> and <a href="https://docs.ray.io/en/latest/index.html">Ray</a> for fast, parallel inference</li>
+                <li>Integration with <a href="https://github.com/hiyouga/LLaMA-Factory">Llama-Factory</a> for training</li>
             </ul>
         </div>
 
